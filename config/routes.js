@@ -1,14 +1,17 @@
 module.exports = function(app) {
-    const {list_cakes, 
-        new_cakes, 
-        getid_cake,
-        new_comment } = require('../controllers/ratecokes')
+    const {list_Cakes, 
+        new_Cake, 
+        getId_Cake,
+        new_Comment,
+        deleteId_Cake } = require('../controllers/ratecokes')
 
-    app.get('/', list_cakes) //lista todo los cakes
+    app.get('/cakes', list_Cakes) //lista todo los cakes
 
-    app.post('/new', new_cakes) // nueva cakes
+    app.post('/newcake', new_Cake) // nueva cakes
 
-    app.get('/cake/:id', getid_cake) //entrega un cake
+    app.get('/cake/:id', getId_Cake) //entrega un cake
 
-    app.post('/comment/:id', new_comment) // nueva cakes
+    app.put('/cakecomment/:id', new_Comment) // nueva cakes
+
+    app.delete('/cake/:id', deleteId_Cake) //Borrar por IDe
 }

@@ -1,11 +1,11 @@
 /* modelo */
 const { Cake, Comment } = require("../models/ratecakes")
 
-async function list_cakes(req, res) {
+async function list_Cakes(req, res) {
     //lista todas las cakes
-    await Cake.find()
+    await Cake.find({}, {"_id":1, "name":1, "url":1} )
         .then( (cakes) => {
-            console.log('Entregado OK list_cakes()' + cakes)
+            // console.log('Entregado OK list_cakes()' + cakes)
             res.json(cakes)
         } )
         .catch( (error) =>{
@@ -14,7 +14,7 @@ async function list_cakes(req, res) {
         } )
 }
 
-async function new_cakes(req, res){
+async function new_Cake(req, res){
     //Nueva cakes
     const { name, url } = req.body;
     const newcakes = new Cake
@@ -22,7 +22,7 @@ async function new_cakes(req, res){
     newcakes.url = url
     await newcakes.save()
         .then( (cakes) => {
-            console.log('Agregado OK new_cakes()' + cakes)
+            // console.log('Agregado OK new_cakes()' + cakes)
             res.json( cakes )
         } )
         .catch( (error) =>{
@@ -32,10 +32,11 @@ async function new_cakes(req, res){
 }
     
 
-async function getid_cake (req, res) {
-    await Cake.findOne( { _id: req.params.id})
+async function getId_Cake (req, res) {
+    await Cake.findOne( { _id: req.params.id},
+         {"_id":1, "name":1, "url":1, "comments":1} )
         .then((cake) => {
-            console.log('Entregado OK getid_cake()' + cake)
+            // console.log('Entregado OK getid_cake()' + cake)
             res.json(cake)
         })
         .catch( (error) =>{
@@ -44,17 +45,15 @@ async function getid_cake (req, res) {
         })
 }
 
-async function new_comment(req, res){
-    // const Comment = cnxmongoose.model('Comment', CommentSchema)
-    // const Cake = cnxmongoose.model('Cakes', CakesSchema)
-    console.log(req)
-    Comment.create(req, function( error, data) {
+async function new_Comment(req, res){
+    console.log(req.body)
+    Comment.create(req.body, function( error, data) {
             if (error) {
-                console.log('Error new_comment()' + error)
+                // console.log('Error new_comment()' + error)
                 res.json( error )
             } else {
-                console.log('Commentario')
-                console.log(data)
+                // console.log('Commentario')
+                // console.log(data)
                 Cake.findOneAndUpdate(
                     { _id: req.params.id}, {$push: {comments: data } },
                     async function(error, dataupd) {
@@ -65,48 +64,30 @@ async function new_comment(req, res){
                             if (dataupd) {
                                 res.json( dataupd)
                             } else {
-                                res.json( {message: 'Cake no actualizo commentario'})
+                                res.json( {message: 'Cake no actualizo commentario'} )
                             }
                         }
                     }
                 )
-
             }
-
         }
         )
-    
-
-/*    
-    const { comment, rate } = req.body;
-    const newcakes = new Comment
-    Comment.comment =  comment
-    Comment.rate = rate
-    await Comment.save()
-        .catch( (error) =>{
-            console.log('Error new_comment()' + error)
-            res.json( error )
-        })
-        .then(async (respuesta) => {
-            console.log('Commentario')
-            console.log(respuesta)
-            await Cake.findOneAndUpdate(
-                    { _id: req.params.id},
-                    {$push: {comments: respuesta } }
-                ).then( (resp_comment) => {
-                    console.log('Commentario OK new_comment()' + resp_comment)
-                    res.send( {respuesta:"Se grabo OK"})
-                } )
-                .catch( (error) =>{
-                    console.log('Error new_comment()' + error)
-                    res.json( error )
-                } )
-        })
-        */
 }
 
+async function deleteId_Cake( req, res){
+    await Cake.deleteOne( { _id: req.params.id })
+    .then((cake) => {
+        // console.log('Eliminacion OK deleteId_Cake()' + cake)
+        res.json({message: 'Cake Eliminado'})
+    })
+    .catch( (error) =>{
+        console.log('Error deleteId_Cake()' + error)
+        res.json( error )
+    })
+}
 module.exports = {
-    list_cakes,
-    new_cakes,
-    getid_cake,
-    new_comment }
+    list_Cakes,
+    new_Cake,
+    getId_Cake,
+    new_Comment,
+    deleteId_Cake }
